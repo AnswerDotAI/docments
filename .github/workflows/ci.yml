@@ -33,7 +33,7 @@ jobs:
       - name: Publish docments-macros when its version is new
         run: |
           v=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[] | select(.name=="docments-macros") | .version')
-          if curl -sf "https://crates.io/api/v1/crates/docments-macros/$v" >/dev/null; then echo "docments-macros $v is already published"; else cargo publish -p docments-macros; fi
+          if curl -sf -A "docments-ci (https://github.com/AnswerDotAI/docments)" "https://crates.io/api/v1/crates/docments-macros/$v" >/dev/null; then echo "docments-macros $v is already published"; else cargo publish -p docments-macros; fi
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
       - run: cargo publish -p docments
