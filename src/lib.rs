@@ -57,9 +57,9 @@ pub struct Docments {
 inventory::collect!(&'static Docments);
 
 impl Docments {
-    /// The first line of `doc`.
-    pub fn summary(&self) -> &'static str {
-        self.doc.lines().next().unwrap_or("")
+    /// The first paragraph of `doc`, its lines joined with spaces: rustdoc's summary convention.
+    pub fn summary(&self) -> String {
+        self.doc.split("\n\n").next().unwrap_or("").lines().collect::<Vec<_>>().join(" ")
     }
 
     /// `module::name`.

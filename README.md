@@ -53,7 +53,7 @@ Param docs are the `///` lines above the parameter, one parameter per line. Trai
 - `docments::all()`: every registered item, sorted by module then name.
 - `docments::find(name)`: by full path (`myapp::restart`), or by a name or trailing path that is unique (`stop` finds `Gate::stop`).
 - `docments::index()`: the module-grouped listing above.
-- `Docments` implements `Display` in the layout above, and has `summary()` (first doc line), `path()`, and `sig()` (the one-line signature). Its fields are public.
+- `Docments` implements `Display` in the layout above, and has `summary()` (the first paragraph, as rustdoc reads it), `path()`, and `sig()` (the one-line signature). Its fields are public.
 - Each item also gets a hidden `pub static`, `RESTART_DOCMENTS` for `restart` and `GATESTOP_DOCMENTS` for `Gate::stop`, for direct reference.
 
 The registry is `inventory`, so it works wherever inventory does: ordinary binaries, tests, and libraries linked into them.

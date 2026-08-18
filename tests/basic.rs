@@ -35,6 +35,10 @@ async fn handler(
     format!("{kid}{n}")
 }
 
+/// A first paragraph that wraps
+/// onto a second line.
+///
+/// Detail follows.
 #[docments]
 fn types<'a>(
     /// Bytes
@@ -112,6 +116,9 @@ fn registry_holds_docs_params_and_return() {
 
 #[test]
 fn types_and_patterns_render_like_rustfmt() {
+    let t = docments::find("types").unwrap();
+    assert_eq!(t.summary(), "A first paragraph that wraps onto a second line.");
+    assert_eq!(t.doc, "A first paragraph that wraps\nonto a second line.\n\nDetail follows.");
     let tys: Vec<_> = docments::find("types").unwrap().params.iter().map(|p| p.ty).collect();
     assert_eq!(
         tys,
