@@ -1,0 +1,16 @@
+[package]
+name = "docments"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Doc comments on function parameters, readable at runtime: doc()-style help for Rust"
+repository = "https://github.com/AnswerDotAI/docments"
+keywords = ["documentation", "docments", "proc-macro", "help"]
+categories = ["development-tools", "rust-patterns"]
+
+[dependencies]
+docments-macros = { version = "0.1", path = "docments-macros" }
+inventory = "0.3"
+
+[workspace]
+members = ["docments-macros"]
