@@ -11,6 +11,15 @@ categories = ["development-tools", "rust-patterns"]
 [dependencies]
 docments-macros = { version = "0.1", path = "docments-macros" }
 inventory = "0.3"
+schemars = { version = "1", optional = true }
+serde_json = { version = "1", optional = true }
+
+[features]
+schema = ["dep:schemars", "dep:serde_json"]
+
+[[test]]
+name = "schema"
+required-features = ["schema"]
 
 [workspace]
 members = ["docments-macros"]

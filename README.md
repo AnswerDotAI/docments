@@ -58,6 +58,18 @@ Param docs are the `///` lines above the parameter, one parameter per line. Trai
 
 The registry is `inventory`, so it works wherever inventory does: ordinary binaries, tests, and libraries linked into them.
 
+## JSON schemas (`schema` feature)
+
+With the `schema` cargo feature, `#[docments(schema)]` on a fn (or impl block) also registers a schema thunk,
+and `docments::get_schema(name)` returns the fn as an LLM tool definition: `{"name", "description", "input_schema"}`,
+with each parameter's schema from [schemars](https://docs.rs/schemars) and its description from the docment.
+Parameters typed `Option<T>` are not required; everything else is. The return type is appended to the description.
+Every parameter type must implement `schemars::JsonSchema`, so the attribute is opt-in per fn rather than part of plain `#[docments]`.
+
+```toml
+docments = { version = "0.1", features = ["schema"] }
+```
+
 ## Development
 
 ```bash

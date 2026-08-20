@@ -142,3 +142,10 @@ pub fn index() -> String {
     }
     out
 }
+
+#[cfg(feature = "schema")]
+pub use schemars;
+#[cfg(feature = "schema")]
+mod schema;
+#[cfg(feature = "schema")]
+pub use schema::{FnSchema, get_schema};
