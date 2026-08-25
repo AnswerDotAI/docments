@@ -23,3 +23,6 @@ required-features = ["schema"]
 
 [workspace]
 members = ["docments-macros"]
+
+[profile.release]
+strip = true
