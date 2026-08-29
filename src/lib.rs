@@ -58,14 +58,10 @@ inventory::collect!(&'static Docments);
 
 impl Docments {
     /// The first paragraph of `doc`, its lines joined with spaces: rustdoc's summary convention.
-    pub fn summary(&self) -> String {
-        self.doc.split("\n\n").next().unwrap_or("").lines().collect::<Vec<_>>().join(" ")
-    }
+    pub fn summary(&self) -> String { self.doc.split("\n\n").next().unwrap_or("").lines().collect::<Vec<_>>().join(" ") }
 
     /// `module::name`.
-    pub fn path(&self) -> String {
-        format!("{}::{}", self.module, self.name)
-    }
+    pub fn path(&self) -> String { format!("{}::{}", self.module, self.name) }
 
     /// The one-line signature: `fn restart(kid: &str, wait: bool) -> String`, or `struct Query { path: String }`.
     pub fn sig(&self) -> String {
@@ -82,9 +78,8 @@ impl Docments {
 /// The signature, one param per line with its doc as a trailing comment, then the item's doc comment.
 impl fmt::Display for Docments {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.params.is_empty() {
-            writeln!(f, "{}", self.sig())?;
-        } else {
+        if self.params.is_empty() { writeln!(f, "{}", self.sig())?; }
+        else {
             let (open, close) = if self.kind == "struct" { (" {", "}") } else { ("(", ")") };
             writeln!(f, "{} {}{open}", self.kind, self.name)?;
             for p in self.params {
@@ -93,9 +88,7 @@ impl fmt::Display for Docments {
             }
             if self.ret.is_empty() { writeln!(f, "{close}")? } else { writeln!(f, "{close} -> {}", self.ret)? }
         }
-        if !self.doc.is_empty() {
-            writeln!(f, "{}", self.doc)?
-        }
+        if !self.doc.is_empty() { writeln!(f, "{}", self.doc)? }
         Ok(())
     }
 }
@@ -110,15 +103,10 @@ pub fn all() -> Vec<&'static Docments> {
 /// The item at the full path `module::name`, or the unique item whose name (or trailing path) is `name`: `stop` finds `Gate::stop`.
 pub fn find(name: &str) -> Option<&'static Docments> {
     let all = all();
-    if let Some(d) = all.iter().find(|d| d.path() == name) {
-        return Some(d);
-    }
+    if let Some(d) = all.iter().find(|d| d.path() == name) { return Some(d); }
     let suffix = format!("::{name}");
     let mut it = all.iter().filter(|d| d.name == name || d.path().ends_with(&suffix));
-    match (it.next(), it.next()) {
-        (Some(d), None) => Some(d),
-        _ => None,
-    }
+    match (it.next(), it.next()) { (Some(d), None) => Some(d), _ => None }
 }
 
 /// One line per registered item, grouped under a `# module` heading: `- fn restart(kid: &str, wait: bool) -> String  # summary`.
@@ -128,16 +116,12 @@ pub fn index() -> String {
     for d in all() {
         if d.module != module {
             module = d.module;
-            if !out.is_empty() {
-                out.push('\n')
-            }
+            if !out.is_empty() { out.push('\n') }
             out.push_str(&format!("# module {module}\n"));
         }
         out.push_str(&format!("- {}", d.sig()));
         let s = d.summary();
-        if !s.is_empty() {
-            out.push_str(&format!("  # {s}"))
-        }
+        if !s.is_empty() { out.push_str(&format!("  # {s}")) }
         out.push('\n');
     }
     out

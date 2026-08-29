@@ -65,9 +65,7 @@ impl Gate {
         &self,
         /// Force?
         force: bool,
-    ) -> bool {
-        force
-    }
+    ) -> bool { force }
 
     /// Open it.
     pub fn open(&mut self) {}
@@ -87,9 +85,7 @@ mod inner {
     pub fn nested(
         /// Some number
         n: u32,
-    ) -> u32 {
-        n
-    }
+    ) -> u32 { n }
 }
 
 mod other {

@@ -22,9 +22,7 @@ fn forecast(
     days: u32,
     /// Units label
     units: Option<String>,
-) -> String {
-    format!("{}:{days}:{units:?}", spot.lat)
-}
+) -> String { format!("{}:{days}:{units:?}", spot.lat) }
 
 #[test]
 fn schema_merges_docments() {

@@ -8,19 +8,13 @@ use syn::{Attribute, Error, Expr, Fields, FnArg, ImplItem, Item, Lit, Meta, Retu
 fn doc_of(attrs: &[Attribute]) -> String {
     let mut lines = vec![];
     for a in attrs {
-        if !a.path().is_ident("doc") {
-            continue;
-        }
+        if !a.path().is_ident("doc") { continue; }
         let Meta::NameValue(nv) = &a.meta else { continue };
         let Expr::Lit(el) = &nv.value else { continue };
         let Lit::Str(s) = &el.lit else { continue };
         let v = s.value();
-        if v.is_empty() {
-            lines.push(String::new())
-        }
-        for l in v.lines() {
-            lines.push(l.strip_prefix(' ').unwrap_or(l).trim_end().to_string())
-        }
+        if v.is_empty() { lines.push(String::new()) }
+        for l in v.lines() { lines.push(l.strip_prefix(' ').unwrap_or(l).trim_end().to_string()) }
     }
     lines.join("\n").trim_matches('\n').to_string()
 }
@@ -75,9 +69,7 @@ fn tidy(ts: Ts) -> String {
             ('p', _) => AFTER.contains(&pt.as_str()),
             _ => false,
         };
-        if space {
-            out.push(' ')
-        }
+        if space { out.push(' ') }
         out.push_str(&t);
         (pk, pt) = (k, t);
         i += 1;
@@ -85,9 +77,7 @@ fn tidy(ts: Ts) -> String {
     out
 }
 
-fn ident_part(s: &str) -> String {
-    s.chars().filter(|c| c.is_alphanumeric()).collect::<String>().to_uppercase()
-}
+fn ident_part(s: &str) -> String { s.chars().filter(|c| c.is_alphanumeric()).collect::<String>().to_uppercase() }
 
 /// One parameter or field, with any `#[cfg]` it carries so its registry entry is gated the same way.
 struct Param {
@@ -109,9 +99,7 @@ struct Doc {
     ret: String,
 }
 
-fn is_option(ty: &syn::Type) -> bool {
-    matches!(ty, syn::Type::Path(p) if p.path.segments.last().is_some_and(|s| s.ident == "Option"))
-}
+fn is_option(ty: &syn::Type) -> bool { matches!(ty, syn::Type::Path(p) if p.path.segments.last().is_some_and(|s| s.ident == "Option")) }
 
 fn field_param(name: String, f: &syn::Field) -> Param {
     Param {
@@ -151,10 +139,7 @@ impl Doc {
                 attrs.push(parse_quote!(#[doc = #line]));
             }
         }
-        let ret = match &sig.output {
-            ReturnType::Default => String::new(),
-            ReturnType::Type(_, ty) => tidy(ty.to_token_stream()),
-        };
+        let ret = match &sig.output { ReturnType::Default => String::new(), ReturnType::Type(_, ty) => tidy(ty.to_token_stream()) };
         let fname = sig.ident.to_string();
         let name = if prefix.is_empty() { fname.clone() } else { format!("{prefix}::{fname}") };
         let stat = format_ident!("{}{}_DOCMENTS", ident_part(prefix), fname.to_uppercase());
