@@ -25,4 +25,8 @@ required-features = ["schema"]
 members = ["docments-macros"]
 
 [profile.release]
-strip = true
+lto = false
+codegen-units = 16
+
+[profile.release.package.docments]
+incremental = true
