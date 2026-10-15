@@ -33,10 +33,7 @@ fn schema_merges_docments() {
     let inp = &s["input_schema"];
     assert_eq!(inp["type"], "object");
     assert_eq!(inp["required"], json!(["spot", "days"]));
-    assert_eq!(
-        inp["properties"]["days"],
-        json!({"description": "How many days ahead", "type": "integer", "format": "uint32", "minimum": 0})
-    );
+    assert_eq!(inp["properties"]["days"], json!({"description": "How many days ahead", "type": "integer", "format": "uint32", "minimum": 0}));
     assert_eq!(inp["properties"]["units"]["type"], json!(["string", "null"]));
     assert_eq!(inp["properties"]["spot"]["$ref"], "#/$defs/Spot");
     assert_eq!(inp["$defs"]["Spot"]["properties"]["lat"]["description"], "Latitude in degrees");

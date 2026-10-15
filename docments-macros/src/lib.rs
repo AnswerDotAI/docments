@@ -36,11 +36,8 @@ fn tidy(ts: Ts) -> String {
             TokenTree::Group(g) => {
                 let inner = tidy(g.stream());
                 let s = match g.delimiter() {
-                    Delimiter::Parenthesis => format!("({inner})"),
-                    Delimiter::Bracket => format!("[{inner}]"),
-                    Delimiter::Brace if inner.is_empty() => "{}".into(),
-                    Delimiter::Brace => format!("{{ {inner} }}"),
-                    Delimiter::None => inner,
+                    Delimiter::Parenthesis => format!("({inner})"), Delimiter::Bracket => format!("[{inner}]"),
+                    Delimiter::Brace if inner.is_empty() => "{}".into(), Delimiter::Brace => format!("{{ {inner} }}"), Delimiter::None => inner
                 };
                 ('g', s)
             }
@@ -61,13 +58,8 @@ fn tidy(ts: Ts) -> String {
             }
         };
         let space = match (pk, k) {
-            (' ', _) => false,
-            ('i', 'i') => true,
-            ('i', 'g') => KEYWORDS.contains(&pt.as_str()),
-            (_, 'p') => SPACED.contains(&t.as_str()),
-            ('p', 'i') => AFTER.contains(&pt.as_str()) || pt == ">",
-            ('p', _) => AFTER.contains(&pt.as_str()),
-            _ => false,
+            (' ', _) => false, ('i', 'i') => true, ('i', 'g') => KEYWORDS.contains(&pt.as_str()), (_, 'p') => SPACED.contains(&t.as_str()),
+            ('p', 'i') => AFTER.contains(&pt.as_str()) || pt == ">", ('p', _) => AFTER.contains(&pt.as_str()), _ => false
         };
         if space { out.push(' ') }
         out.push_str(&t);
@@ -80,36 +72,16 @@ fn tidy(ts: Ts) -> String {
 fn ident_part(s: &str) -> String { s.chars().filter(|c| c.is_alphanumeric()).collect::<String>().to_uppercase() }
 
 /// One parameter or field, with any `#[cfg]` it carries so its registry entry is gated the same way.
-struct Param {
-    name: String,
-    ty: String,
-    ty_ts: Ts,
-    required: bool,
-    doc: String,
-    cfgs: Vec<Attribute>,
-}
+struct Param { name: String, ty: String, ty_ts: Ts, required: bool, doc: String, cfgs: Vec<Attribute> }
 
 /// Everything the runtime `Docments` value needs, gathered from one item.
-struct Doc {
-    kind: &'static str,
-    name: String,
-    stat: Ident,
-    doc: String,
-    params: Vec<Param>,
-    ret: String,
-}
+struct Doc { kind: &'static str, name: String, stat: Ident, doc: String, params: Vec<Param>, ret: String }
 
 fn is_option(ty: &syn::Type) -> bool { matches!(ty, syn::Type::Path(p) if p.path.segments.last().is_some_and(|s| s.ident == "Option")) }
 
 fn field_param(name: String, f: &syn::Field) -> Param {
-    Param {
-        name,
-        ty: tidy(f.ty.to_token_stream()),
-        ty_ts: f.ty.to_token_stream(),
-        required: !is_option(&f.ty),
-        doc: doc_of(&f.attrs),
-        cfgs: f.attrs.iter().filter(|a| a.path().is_ident("cfg")).cloned().collect(),
-    }
+    Param { name, ty: tidy(f.ty.to_token_stream()), ty_ts: f.ty.to_token_stream(), required: !is_option(&f.ty), doc: doc_of(&f.attrs),
+        cfgs: f.attrs.iter().filter(|a| a.path().is_ident("cfg")).cloned().collect() }
 }
 
 impl Doc {
@@ -121,14 +93,8 @@ impl Doc {
             let doc = doc_of(&pt.attrs);
             pt.attrs.retain(|a| !a.path().is_ident("doc"));
             let cfgs = pt.attrs.iter().filter(|a| a.path().is_ident("cfg")).cloned().collect();
-            params.push(Param {
-                name: tidy(pt.pat.to_token_stream()),
-                ty: tidy(pt.ty.to_token_stream()),
-                ty_ts: pt.ty.to_token_stream(),
-                required: !is_option(&pt.ty),
-                doc,
-                cfgs,
-            });
+            params.push(Param { name: tidy(pt.pat.to_token_stream()), ty: tidy(pt.ty.to_token_stream()), ty_ts: pt.ty.to_token_stream(),
+                required: !is_option(&pt.ty), doc, cfgs });
         }
         if params.iter().any(|p| !p.doc.is_empty()) {
             attrs.push(parse_quote!(#[doc = ""]));
@@ -149,8 +115,7 @@ impl Doc {
     fn from_struct(s: &syn::ItemStruct) -> Self {
         let params = match &s.fields {
             Fields::Named(f) => f.named.iter().map(|f| field_param(f.ident.as_ref().unwrap().to_string(), f)).collect(),
-            Fields::Unnamed(f) => f.unnamed.iter().enumerate().map(|(i, f)| field_param(i.to_string(), f)).collect(),
-            Fields::Unit => vec![],
+            Fields::Unnamed(f) => f.unnamed.iter().enumerate().map(|(i, f)| field_param(i.to_string(), f)).collect(), Fields::Unit => vec![]
         };
         let name = s.ident.to_string();
         let stat = format_ident!("{}_DOCMENTS", name.to_uppercase());
@@ -160,10 +125,7 @@ impl Doc {
     /// The hidden static holding this item's docments, and its registration.
     fn emit(&self) -> Ts {
         let Doc { kind, name, stat, doc, ret, .. } = self;
-        let params = self
-            .params
-            .iter()
-            .map(|Param { name, ty, doc, cfgs, .. }| quote! { #(#cfgs)* ::docments::Param { name: #name, ty: #ty, doc: #doc } });
+        let params = self.params.iter().map(|Param { name, ty, doc, cfgs, .. }| quote! { #(#cfgs)* ::docments::Param { name: #name, ty: #ty, doc: #doc } });
         quote! {
             #[doc(hidden)]
             pub static #stat: ::docments::Docments = ::docments::Docments {
@@ -202,24 +164,18 @@ impl Doc {
 #[proc_macro_attribute]
 pub fn docments(attr: TokenStream, item: TokenStream) -> TokenStream {
     let schema = match attr.to_string().as_str() {
-        "" => false,
-        "schema" => true,
-        _ => return Error::new_spanned(Ts::from(attr), "#[docments] takes no arguments except `schema`").to_compile_error().into(),
+        "" => false, "schema" => true,
+        _ => return Error::new_spanned(Ts::from(attr), "#[docments] takes no arguments except `schema`").to_compile_error().into()
     };
     let mut item = parse_macro_input!(item as Item);
     let docs = match &mut item {
         Item::Fn(f) => vec![Doc::from_sig("", &mut f.attrs, &mut f.sig)],
         Item::Impl(im) => {
             let prefix = tidy(im.self_ty.to_token_stream());
-            im.items
-                .iter_mut()
-                .filter_map(|it| if let ImplItem::Fn(m) = it { Some(Doc::from_sig(&prefix, &mut m.attrs, &mut m.sig)) } else { None })
-                .collect()
+            im.items.iter_mut().filter_map(|it| if let ImplItem::Fn(m) = it { Some(Doc::from_sig(&prefix, &mut m.attrs, &mut m.sig)) } else { None }).collect()
         }
         Item::Struct(s) if schema => {
-            return Error::new_spanned(s, "#[docments(schema)] goes on fns; derive schemars::JsonSchema for a struct")
-                .to_compile_error()
-                .into();
+            return Error::new_spanned(s, "#[docments(schema)] goes on fns; derive schemars::JsonSchema for a struct").to_compile_error().into();
         }
         Item::Struct(s) => vec![Doc::from_struct(s)],
         other => return Error::new_spanned(other, "#[docments] goes on a fn, an impl block, or a struct").to_compile_error().into(),

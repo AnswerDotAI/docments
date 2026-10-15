@@ -16,10 +16,7 @@ fn restart(
     #[cfg(unix)]
     /// Extra args, unix only
     extra: Option<Vec<String>>,
-) -> Result<(), String> {
-    let _ = (kid, wait, extra);
-    Ok(())
-}
+) -> Result<(), String> { let _ = (kid, wait, extra); Ok(()) }
 
 /// Docs above the attribute.
 #[docments]
@@ -48,10 +45,7 @@ fn types<'a>(
     p: *const u8,
     m: HashMap<String, Vec<u8>>,
     label: &str,
-) -> &'a [u8] {
-    let _ = (f, g, p, m, label);
-    buf
-}
+) -> &'a [u8] { let _ = (f, g, p, m, label); buf }
 
 #[docments]
 fn ping() {}
@@ -101,10 +95,7 @@ fn registry_holds_docs_params_and_return() {
     assert_eq!(d.doc, "Restart the kernel `kid`, keeping its id.\n\nA second paragraph.");
     assert_eq!(d.summary(), "Restart the kernel `kid`, keeping its id.");
     let ps: Vec<_> = d.params.iter().map(|p| (p.name, p.ty, p.doc)).collect();
-    assert_eq!(
-        ps,
-        [("kid", "&str", "Kernel id"), ("wait", "bool", "Wait until ready?"), ("extra", "Option<Vec<String>>", "Extra args, unix only")]
-    );
+    assert_eq!(ps, [("kid", "&str", "Kernel id"), ("wait", "bool", "Wait until ready?"), ("extra", "Option<Vec<String>>", "Extra args, unix only")]);
     assert_eq!(d.ret, "Result<(), String>");
     assert_eq!(docments::find("handler").unwrap().doc, "Docs above the attribute.");
     assert_eq!(HANDLER_DOCMENTS.name, "handler");
@@ -116,10 +107,7 @@ fn types_and_patterns_render_like_rustfmt() {
     assert_eq!(t.summary(), "A first paragraph that wraps onto a second line.");
     assert_eq!(t.doc, "A first paragraph that wraps\nonto a second line.\n\nDetail follows.");
     let tys: Vec<_> = docments::find("types").unwrap().params.iter().map(|p| p.ty).collect();
-    assert_eq!(
-        tys,
-        ["&'a mut [u8]", "impl Fn(i32) -> i32 + Send", "Box<dyn Fn(&str) -> bool>", "*const u8", "HashMap<String, Vec<u8>>", "&str"]
-    );
+    assert_eq!(tys, ["&'a mut [u8]", "impl Fn(i32) -> i32 + Send", "Box<dyn Fn(&str) -> bool>", "*const u8", "HashMap<String, Vec<u8>>", "&str"]);
     let h = docments::find("handler").unwrap();
     let names: Vec<_> = h.params.iter().map(|p| p.name).collect();
     assert_eq!(names, ["Path(kid)", "(a, b)", "mut n", "_"]);
@@ -151,10 +139,7 @@ fn find_by_name_path_or_unique_suffix() {
 
 #[test]
 fn display_uses_the_doc_layout() {
-    assert_eq!(
-        docments::find("Gate::stop").unwrap().to_string(),
-        "fn Gate::stop(\n    force: bool, // Force?\n) -> bool\nStop the gate.\n"
-    );
+    assert_eq!(docments::find("Gate::stop").unwrap().to_string(), "fn Gate::stop(\n    force: bool, // Force?\n) -> bool\nStop the gate.\n");
     assert_eq!(docments::find("ping").unwrap().to_string(), "fn ping()\n");
     assert_eq!(
         docments::find("Query").unwrap().to_string(),
@@ -167,7 +152,10 @@ fn index_groups_by_module() {
     let idx = docments::index();
     assert!(idx.starts_with("# module basic\n"), "{idx}");
     assert!(idx.contains("- fn ping()\n"), "{idx}");
-    assert!(idx.contains("- fn restart(kid: &str, wait: bool, extra: Option<Vec<String>>) -> Result<(), String>  # Restart the kernel `kid`, keeping its id.\n"), "{idx}");
+    assert!(
+        idx.contains("- fn restart(kid: &str, wait: bool, extra: Option<Vec<String>>) -> Result<(), String>  # Restart the kernel `kid`, keeping its id.\n"),
+        "{idx}"
+    );
     assert!(idx.contains("\n# module basic::inner\n- fn nested(n: u32) -> u32  # Lives in a nested module.\n"), "{idx}");
     assert_eq!(docments::all().len(), 9);
 }

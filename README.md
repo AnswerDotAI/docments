@@ -86,7 +86,7 @@ Every parameter type must implement `schemars::JsonSchema`. Schema generation is
 
 ```bash
 cargo test
-cargo fmt && cargo clippy --all-targets -- -D warnings
+cargo fastfmt && cargo clippy --all-targets -- -D warnings
 ```
 
 ## Release

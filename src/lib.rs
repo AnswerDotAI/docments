@@ -67,10 +67,8 @@ impl Docments {
     pub fn sig(&self) -> String {
         let ps: Vec<String> = self.params.iter().map(|p| format!("{}: {}", p.name, p.ty)).collect();
         match self.kind {
-            "struct" if ps.is_empty() => format!("struct {}", self.name),
-            "struct" => format!("struct {} {{ {} }}", self.name, ps.join(", ")),
-            _ if self.ret.is_empty() => format!("fn {}({})", self.name, ps.join(", ")),
-            _ => format!("fn {}({}) -> {}", self.name, ps.join(", "), self.ret),
+            "struct" if ps.is_empty() => format!("struct {}", self.name), "struct" => format!("struct {} {{ {} }}", self.name, ps.join(", ")),
+            _ if self.ret.is_empty() => format!("fn {}({})", self.name, ps.join(", ")), _ => format!("fn {}({}) -> {}", self.name, ps.join(", "), self.ret)
         }
     }
 }
@@ -78,8 +76,7 @@ impl Docments {
 /// The signature, one param per line with its doc as a trailing comment, then the item's doc comment.
 impl fmt::Display for Docments {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.params.is_empty() { writeln!(f, "{}", self.sig())?; }
-        else {
+        if self.params.is_empty() { writeln!(f, "{}", self.sig())?; } else {
             let (open, close) = if self.kind == "struct" { (" {", "}") } else { ("(", ")") };
             writeln!(f, "{} {}{open}", self.kind, self.name)?;
             for p in self.params {
