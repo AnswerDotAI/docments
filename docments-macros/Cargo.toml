@@ -8,6 +8,7 @@ repository = "https://github.com/AnswerDotAI/docments"
 
 [lib]
 proc-macro = true
+test = false
 
 [dependencies]
 syn = { version = "2", features = ["full"] }

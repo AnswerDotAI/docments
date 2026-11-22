@@ -8,6 +8,9 @@ repository = "https://github.com/AnswerDotAI/docments"
 keywords = ["documentation", "docments", "proc-macro", "help"]
 categories = ["development-tools", "rust-patterns"]
 
+[lib]
+test = false
+
 [dependencies]
 docments-macros = { version = "0.1", path = "docments-macros" }
 inventory = "0.3"
