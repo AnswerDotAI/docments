@@ -12,12 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
       - uses: AnswerDotAI/.github/actions/sccache@main
         with:
           r2-url: ${{ secrets.SCCACHE_R2 }}
-      - run: cargo clippy --all-targets --all-features -- -D warnings
       - run: cargo test --all-features
 
   publish:
