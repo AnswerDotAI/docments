@@ -10,6 +10,7 @@ categories = ["development-tools", "rust-patterns"]
 
 [lib]
 test = false
+doctest = false
 
 [dependencies]
 docments-macros = { version = "0.1", path = "docments-macros" }
